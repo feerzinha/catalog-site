@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class='pane'>
+        <h1>Categories</h1>
+
+        <a href="{{url_for('newCategory')}}">
+            <h3> Create a New Category </h3>
+        </a>
+
+        {% for category in categories %}
+
+
+        <a href="{{url_for('showItems', category_id = category.id)}}">
+                <p id="item_menu">{{category.name}}</p>
+        </a>
+
+        <!-- <p><a href="{{url_for('editCategory', category_id = category.id)}}">Edit Category</a></p>
+
+        <p> <a href="{{url_for('deleteCategory',category_id = category.id)}}">Delete Category</a> </p> -->
+
+
+
+        {% endfor %}
+    </div>
+
+    <div class='details'>
+        <h1>{{ category.name }}</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        <ul>
+            {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        {% if items !=[] %}
+
+        <a href="{{url_for('newCatalogItem', category_id = category.id )}}">
+            <h3> Create New Item </h3>
+        </a>
+        </br>
+
+        {% for i in items %}
+
+        <div class='card'>
+
+            <h4>{{i.name}}</h4>
+
+
+            <p id="item_description">{{i.description}}</p>
+
+
+            &nbsp;<a href='{{url_for('editCatalogItem', category_id = category.id, item_id=i.id ) }}'>Edit</a>
+            &nbsp;&nbsp;
+            <a href='{{url_for('deleteCatalogItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
+            </br>
+        </div>
+        </br>
+
+        {% endfor %}
+
+
+        </br></br>
+
+        {% else %}
+        <p> You currently have no menu items. <p>
+                <a href="{{url_for('newCatalogItem', category_id = category.id )}}">Create New Item</a>
+                {% endif %}
+    </div>
+</body>
+
+</html>

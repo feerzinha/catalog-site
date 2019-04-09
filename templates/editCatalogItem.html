@@ -1,0 +1,41 @@
+<html>
+
+<head>
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+	<div class='details'>
+		<h1> Edit Menu Item </h1>
+
+		<form action="#" method='post'>
+
+			<p id="title">Name:</p>
+			<input type='text' size='30' name='name' placeholder='{{item.name }}'>
+			<p id="title">Description:</p>
+			<input type='text' size='30' name='description' placeholder='{{item.description}}'>
+			<p id="title">Price:</p>
+			<input type='text' size='30' name='price' placeholder='{{item.price}}'>
+			<p id="title">Category:<p>
+
+					<select name="category">
+						{% for category_item in category_items %}
+						{% if category_item.id == category_id %}
+						<option value="{{category_item.id}}" SELECTED>{{category_item.name}}</option>
+						{% else %}
+						<option value="{{category_item.id}}">{{category_item.name}}</option>
+						{% endif %}
+
+						{% endfor %}
+					</select>
+
+					<input type='submit' value='Edit'>
+
+
+					<a href='{{url_for('showCategories')}}'> Cancel </a>
+
+		</form>
+	</div>
+</body>
+
+</html>

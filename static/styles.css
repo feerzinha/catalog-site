@@ -1,0 +1,39 @@
+body            { font-family: sans-serif; background-color: #CCCCCC; background-image: url('https://wwwumviajantecombr-jmyt0ry.stackpathdns.com/wp-content/uploads/2018/10/curacao-caribe-um-viajante-001-2.jpg'); background-size:cover;}
+ h1, h2       { color: #084b63; }
+ h3             { color: rgba(255, 255, 255, 0.925); }
+ h4             {color: #084b63;}
+h1, h2          { font-family: 'Georgia', serif; margin: 0; }
+h1              { border-bottom: 2px solid #eee; text-align: center;}
+h2              { font-size: 1.2em; }
+
+p               { color: #084b63;}
+
+a {text-decoration: none; color: #e2ac15; font-size: 12px;}
+
+.pane {position:absolute; left: 5%; border: 2px solid; min-width: 230px;
+    border-radius: 25px; padding: 5px; margin: 5px; border-color: #999999; background-color: #1aa8d8ce; }
+
+.details {position:absolute; left: 35%; border: 2px solid;
+    border-radius: 25px; padding: 15px; margin: 5px; border-color: #999999; background-color: #19a6a6cb; 
+    min-width: 500px;}
+
+.card {border-radius: 25px; padding: 8px; border-color: #999999; background-color: #afaeae79}
+
+.header         {left:50%; text-align: center;}
+.name {width:50%;display: inline-block; float: left;}
+.description {}
+.price {text-align: right; width:50%; float: right; }
+.editdeletepane{}
+
+.flash          { background: #cee5F5; }
+
+#title { color: #f7f6ee; }
+
+#item_menu {
+    color: #e2ac15;
+    font-size: 20px;
+  }
+
+#item_description {
+    color: #504f4f;
+  }

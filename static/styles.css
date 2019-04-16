@@ -1,21 +1,24 @@
-body            { font-family: sans-serif; background-color: #CCCCCC; background-image: url('https://wwwumviajantecombr-jmyt0ry.stackpathdns.com/wp-content/uploads/2018/10/curacao-caribe-um-viajante-001-2.jpg'); background-size:cover;}
+body            { font-family: "Trebuchet MS", Helvetica, sans-serif; background-color: #CCCCCC; background-image: url('https://wwwumviajantecombr-jmyt0ry.stackpathdns.com/wp-content/uploads/2018/10/curacao-caribe-um-viajante-001-2.jpg'); background-size:cover;}
  h1, h2       { color: #084b63; }
  h3             { color: rgba(255, 255, 255, 0.925); }
- h4             {color: #084b63;}
+ h4             {color: #084b63; font-size: 19px; margin-top: 7px;}
 h1, h2          { font-family: 'Georgia', serif; margin: 0; }
-h1              { border-bottom: 2px solid #eee; text-align: center;}
+h1              { border-bottom: 2px solid #eee; text-align: center; padding: 7px;}
 h2              { font-size: 1.2em; }
 
 p               { color: #084b63;}
 
 a {text-decoration: none; color: #e2ac15; font-size: 12px;}
 
-.pane {position:absolute; left: 5%; border: 2px solid; min-width: 230px;
+.pane {position:absolute; left: 2%; border: 2px solid; min-width: 230px;
     border-radius: 25px; padding: 5px; margin: 5px; border-color: #999999; background-color: #1aa8d8ce; }
 
-.details {position:absolute; left: 35%; border: 2px solid;
+.login_pane {position:absolute; right: 2%; border: 1px solid; min-width: 100px;
+    border-radius: 25px; padding: 5px; margin: 5px; border-color: #999999; background-color: #1aa8d8ce;}
+
+.details {position:absolute; left: 28%; border: 2px solid;
     border-radius: 25px; padding: 15px; margin: 5px; border-color: #999999; background-color: #19a6a6cb; 
-    min-width: 500px;}
+    min-width: 500px; max-width: 650px;}
 
 .card {border-radius: 25px; padding: 8px; border-color: #999999; background-color: #afaeae79}
 
@@ -35,5 +38,21 @@ a {text-decoration: none; color: #e2ac15; font-size: 12px;}
   }
 
 #item_description {
-    color: #504f4f;
+    /* color: #504f4f; */
+    color: #53462a;
+    font-size: 16px;
   }
+
+#admin-txt {  
+  color:white;
+  font-size:12px; 
+  text-align: center;
+}
+
+#google-button {
+  background-image: url(btn_google.png);
+  background-size: 100% 100%;
+  height: 40px;  
+  width: 150px;
+  border-radius: 15px;
+}

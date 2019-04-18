@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <div class='pane'>
+            <h1>Categories</h1>
+
+            {% if loggedin %}
+            <a href="{{url_for('newCategory')}}">
+                <h3> Create a New Category </h3>
+            </a>
+
+            {% endif %}
+
+            <br> {% for category in categories %}
+
+            <div style="position: relative;">
+                <a href="{{url_for('showItems', category_id = category.id)}}">
+                    <span id="item_menu">
+                        {{category.name}}
+                    </span>
+                </a>
+                {% if loggedin %}
+                <div style="position:absolute; top:0%; right: 4%;">
+                    <a href="{{url_for('editCategory', category_id = category.id)}}">
+                        <img src="/static/btn_edit.png">
+                    </a>
+                    <a href="{{url_for('deleteCategory',category_id = category.id)}}">
+                        <img src="/static/btn_delete.png">
+                    </a>
+                </div>
+                {% endif %}
+                <br>
+                <br>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

@@ -1,6 +1,8 @@
+"""This file manages all the website endpoints, render the templates and take care of the authentication."""
+
 from flask import Flask, render_template, request, redirect, jsonify, url_for
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, joinedload
 from database_setup import Base, User, CatalogItem, Category
 
 # For Auth
@@ -15,23 +17,24 @@ from flask import make_response
 import requests
 
 app = Flask(__name__)
-# Set the secret key to some random bytes. Keep this really secret!
+# Set the secret key to some random bytes. Should be secret! =O 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 CLIENT_ID = json.loads(
     open('client_secret.json', 'r').read())['web']['client_id']
-APPLICATION_NAME = "Restaurant Menu Application"
+APPLICATION_NAME = "Catalog Application"
 
 engine = create_engine('sqlite:///catalog.db', connect_args={'check_same_thread': False}, echo=True)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 session = Session()
 
+# Store login html
 login_output = ""
 
-# Create anti-forgery state token
 @app.route('/login')
 def showLogin():
+    """Create anti-forgery state token and if is logged in, return the login template."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
@@ -41,10 +44,11 @@ def showLogin():
     if loggedIn and login_output == "":
         login_output = getProfileHTML()
 
-    return render_template('login.html', STATE=state, loggedin=hasValidLogin(), login_output=login_output)
+    return render_template('login.html', STATE=state, loggedin=loggedIn, login_output=login_output)
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Connect and receive data after google authentication."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -119,6 +123,7 @@ def gconnect():
     return getProfileHTML()
 
 def getProfileHTML():
+    """Output html to login view."""
     output = ''
     output += '<div style="display: flex; align-items: center; justify-content: center;">'
     output += '<img src="'
@@ -130,27 +135,20 @@ def getProfileHTML():
     output += '<a href="/gdisconnect" style="margin:10px;display:block;"> <button style="width: 100%; font-size: 13px; border-radius: 10px; padding:3px;">Logout</button> </a>'
     output += '</div></div>'
 
-    print(output)
-
     return output
-
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Disconnect user, and erase session data."""
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s', access_token)
-    print('User name is: ')
-    print(login_session['username'])
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print('result is ')
-    print(result)
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['gplus_id']
@@ -164,37 +162,42 @@ def gdisconnect():
         response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
         response.headers['Content-Type'] = 'application/json'
         
-    print(response)
     return redirect(url_for('showCategories'))
 
-#TODO: Build a better json - unique
 @app.route('/category/<int:category_id>/items/JSON')
 def categoryItemsJSON(category_id):
+    """Return JSON with categories and items."""
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(CatalogItem).filter_by(
         category_id=category_id).all()
-    return jsonify(CatalogItem=[i.serialize for i in items])
 
+    return jsonify(CatalogItem=[i.serialize for i in items])
 
 @app.route('/catalog/JSON')
 def catalogJSON():
-    # TODO: Build a better json - unique
-    #Concat all infos and return
-    catalog = session.query(Category).all()
-    return jsonify(catalog=[r.serialize for r in catalog])
+    """Join Category and Items to build the json."""
+    categories = session.query(Category).options(joinedload(Category.items)).all()
+    result = dict(Catalog=[dict(c.serialize, items=[i.serialize
+                                                     for i in c.items])
+                         for c in categories])
 
+    return jsonify(result)
 
-# Show all categories
 @app.route('/')
 @app.route('/categories/')
 def showCategories():
-    category = session.query(Category).all()
-    return render_template('catalogCategories.html', categories=category, loggedin=hasValidLogin())
+    """Show categories page."""
+    return render_template('catalogCategories.html')
 
+@app.route('/categoriesMenu')
+def showCategoriesMenu():
+    """Show categories menu items layout."""
+    category = session.query(Category).order_by(Category.name).all()
+    return render_template('categoriesMenu.html', categories=category, loggedin=hasValidLogin())
 
-# Create a new category
 @app.route('/category/new/', methods=['GET', 'POST'])
 def newCategory():
+    """Create a new category."""
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'])
         session.add(newCategory)
@@ -203,12 +206,10 @@ def newCategory():
     else:
         return render_template('newCategory.html')
 
-
-# Edit a category
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
 def editCategory(category_id):
-    editedCategory = session.query(
-        Category).filter_by(id=category_id).one()
+    """Edit a category."""
+    editedCategory = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = request.form['name']
@@ -217,9 +218,9 @@ def editCategory(category_id):
         return render_template(
             'editCategory.html', category=editedCategory)
 
-# Delete a category
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_id):
+    """Delete a category."""
     categoryToDelete = session.query(
         Category).filter_by(id=category_id).one()
     if request.method == 'POST':
@@ -231,21 +232,19 @@ def deleteCategory(category_id):
         return render_template(
             'deleteCategory.html', category=categoryToDelete)
 
-# Show a category items
 @app.route('/category/<int:category_id>/')
 @app.route('/category/<int:category_id>/items/')
 def showItems(category_id):
-    categories = session.query(Category).all()
-
+    """Show a category items."""
     category = session.query(Category).filter_by(id=category_id).one()
-    items = session.query(CatalogItem).filter_by(
-        category_id=category_id).all()
-    return render_template('catalogItems.html', items=items, category=category, categories=categories, loggedin=hasValidLogin())
+    items = session.query(CatalogItem).filter_by(category_id=category_id).all()  
 
-# Create a new catalog item
+    return render_template('catalogItems.html', items=items, category=category, loggedin=hasValidLogin())
+
 @app.route(
     '/category/<int:category_id>/items/new/', methods=['GET', 'POST'])
 def newCatalogItem(category_id):
+    """Create a new catalog item."""
     if not hasValidLogin():
         return redirect(url_for('showLogin'))
 
@@ -259,11 +258,10 @@ def newCatalogItem(category_id):
     else:
         return render_template('newCatalogItem.html', category_id=category_id)
 
-
-# Edit a catalog item
 @app.route('/category/<int:category_id>/items/<int:item_id>/edit',
            methods=['GET', 'POST'])
 def editCatalogItem(category_id, item_id):
+    """Edit a catalog item."""
     if not hasValidLogin():
         return redirect(url_for('showLogin'))
 
@@ -278,9 +276,8 @@ def editCatalogItem(category_id, item_id):
         if request.form['category']:
             edited_category_id = request.form['category']
             edited_category =  session.query(Category).filter_by(id=edited_category_id).one()
-
             editedItem.category = edited_category
-        #TODO: Manter o owner
+
         session.add(editedItem)
         session.commit()
         return redirect(url_for('showItems', category_id=category_id))
@@ -288,13 +285,10 @@ def editCatalogItem(category_id, item_id):
         return render_template(
             'editCatalogItem.html', category_id=category_id, item=editedItem, category_items=categories)
 
-    # return 'This page is for editing catalog item %s' % catalog_item_id
-
-
-# Delete a catalog item
 @app.route('/category/<int:category_id>/items/<int:item_id>/delete',
            methods=['GET', 'POST'])
 def deleteCatalogItem(category_id, item_id):
+    """Delete a catalog item."""
     if not hasValidLogin():
         return redirect(url_for('showLogin'))
 
@@ -307,11 +301,11 @@ def deleteCatalogItem(category_id, item_id):
         return render_template('deleteCatalogItem.html', item=itemToDelete)
 
 def hasValidLogin():
+    """Validate if user is logged in."""
     if 'username' not in login_session:
         return False;
     else:
         return True;
-
 
 if __name__ == '__main__':
     app.debug = True

@@ -1,71 +1,63 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 
-<head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
-    <script>
-        // var my_client_id = config.CLIENT_ID;
-        print(config.CLIENT_ID); 
-        function start() {
-            gapi.load('auth2', function () {
-                auth2 = gapi.auth2.init({
-                     client_id: '387693842973-l07e4rcsb8jockd97g9mkhajh94mmqbs.apps.googleusercontent.com'
-                });
-            });
-        }
-    </script>
-    
-
-</head>
-
-
-<body>
-    {% if not loggedin %}
-    <p id="admin-txt"> Are you administrator? </p>
-    <button id="google-button"/>
-    {% endif %}
-
-    <div id="result">
-        {% if loggedin %}
-            {{ login_output|safe }}
-        {% endif %}
-    </div>
-
-    <script>
-        $('#google-button').click(function () {
-            function signInCallback(authResult) {
-                if (authResult['code']) {
-                    $('#google-button').attr('style', 'display: none');
-                    $('#admin-txt').attr('style', 'display: none');
-                    $.ajax({
-                        type: 'POST',
-                        url: '/gconnect?state={{STATE}}',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        contentType: 'application/octet-stream; charset=utf-8',
-                        success: function (result) {
-                            $('#result').html(result)
-                             setTimeout(function () {
-                                window.location.reload(true)
-                             }, 200);
-                        },
-                        processData: false,
-                        data: authResult['code']
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+        <script>
+            function start() {
+                gapi.load('auth2', function () {
+                    auth2 = gapi.auth2.init({
+                        client_id: '387693842973-l07e4rcsb8jockd97g9mkhajh94mmqbs.apps.googleusercontent.com'
                     });
-                } else {
-                    // handle error
-                    console.log('There was an error: ' + authResult['error']);
-                    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                }
+                });
             }
-            auth2.grantOfflineAccess().then(signInCallback);
-        });
-    </script>
+        </script>
+    </head>
+    <body>
+        {% if not loggedin %}
+            <p id="admin-txt"> Are you administrator? </p>
+            <button id="google-button"/>
+        {% endif %}
 
-</body>
+        <div id="result">
+            {% if loggedin %}
+                {{ login_output|safe }}
+            {% endif %}
+        </div>
 
+        <script>
+            $('#google-button').click(function () {
+                function signInCallback(authResult) {
+                    if (authResult['code']) {
+                        $('#google-button').attr('style', 'display: none');
+                        $('#admin-txt').attr('style', 'display: none');
+                        $.ajax({
+                            type: 'POST',
+                            url: '/gconnect?state={{STATE}}',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            contentType: 'application/octet-stream; charset=utf-8',
+                            success: function (result) {
+                                $('#result').html(result)
+                                setTimeout(function () {
+                                    //reload current page
+                                    window.location.reload(true)
+                                }, 200);
+                            },
+                            processData: false,
+                            data: authResult['code']
+                        });
+                    } else {
+                        // handle error
+                        console.log('There was an error: ' + authResult['error']);
+                        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                    }
+                }
+                auth2.grantOfflineAccess().then(signInCallback);
+            });
+        </script>
+    </body>
 </html>

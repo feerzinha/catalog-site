@@ -1,111 +1,83 @@
 <html>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 
-<head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div id="menu_panel">
+            <script> 
+                $(function () {
+                    $("#menu_panel").load("{{ url_for('showCategoriesMenu') }}");
+                });
+            </script>
+        </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-</head>
+        <div class='details'>
+            <h1 style="color: #e2ac15;">{{ category.name }}</h1>
 
-<body>
-    <div class='pane'>
-        <h1>Categories</h1>
+            {% with messages = get_flashed_messages() %} {% if messages %}
 
-        {% if loggedin %}
-        <a href="{{url_for('newCategory')}}">
-            <h3> Create a New Category </h3>
-        </a>
-        
-        {% endif %} 
-        
-        <br>
-
-        {% for category in categories %}
-
-        <div style="position: relative;">
-            <a href="{{url_for('showItems', category_id = category.id)}}">
-                <span id="item_menu">
-                    {{category.name}}
-                </span>
-            </a>
+            <ul>
+                {% for message in messages %}
+                <li>
+                    <strong> {{ message }} </strong>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %} {% endwith %} 
+            
+            {% if items !=[] %}
+            
             {% if loggedin %}
-            <div style="position:absolute; top:0%; right: 4%;">
-                <a href="{{url_for('editCategory', category_id = category.id)}}">
+            <a href="{{url_for('newCatalogItem', category_id = category.id )}}">
+                <h3> Create New Item </h3>
+            </a>
+            {% endif %}
+
+            </br>
+
+            {% for i in items %}
+
+            <div class='card'>
+                <h4>{{i.name}}</h4>
+
+                <p id="item_description">{{i.description}}</p>
+
+                {% if loggedin %} 
+                &nbsp;
+                <a href="{{url_for('editCatalogItem', category_id = category.id, item_id=i.id ) }}">
                     <img src="/static/btn_edit.png">
                 </a>
-                <a href="{{url_for('deleteCategory',category_id = category.id)}}">
+                &nbsp;&nbsp;
+                <a href="{{url_for('deleteCatalogItem', category_id = category.id, item_id=i.id ) }}">
                     <img src="/static/btn_delete.png">
                 </a>
-                
-            </div>
-            {% endif %}
-            <br>
-            <br>
-        </div>
-
-        {% endfor %}
-    </div>
-
-    <div class='details'>
-        <h1 style="color: #e2ac15;">{{ category.name }}</h1>
-
-        {% with messages = get_flashed_messages() %} {% if messages %}
-
-        <ul>
-            {% for message in messages %}
-            <li>
-                <strong> {{ message }} </strong>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %} {% endwith %} {% if items !=[] %} {% if loggedin %}
-        <a href="{{url_for('newCatalogItem', category_id = category.id )}}">
-            <h3> Create New Item </h3>
-        </a>
-
-        {% endif %}
-
-        </br>
-
-        {% for i in items %}
-
-        <div class='card'>
-
-            <h4>{{i.name}}</h4>
-
-
-            <p id="item_description">{{i.description}}</p>
-
-            {% if loggedin %} &nbsp;
-            <a href="{{url_for('editCatalogItem', category_id = category.id, item_id=i.id ) }}"><img src="/static/btn_edit.png"></a>
-            &nbsp;&nbsp;
-            <a href="{{url_for('deleteCatalogItem', category_id = category.id, item_id=i.id ) }}"><img src="/static/btn_delete.png"></a>
-            </br>
-            {% endif %}
-        </div>
-        </br>
-
-        {% endfor %}
-
-
-        </br>
-        </br>
-
-        {% else %}
-        <p> You currently have no menu items.
-            <p>
-                <a href="{{url_for('newCatalogItem', category_id = category.id )}}">Create New Item</a>
+                </br>
                 {% endif %}
-    </div>
+            </div>
+            </br>
 
-    <div class='login_pane' id='login_pane'>
+            {% endfor %}
 
-        <script>
-            $(function () {
-                $("#login_pane").load("{{ url_for('showLogin') }}");
-            });
-        </script>
+            </br>
+            </br>
 
-    </div>
-</body>
+            {% else %}
+            <h4> You currently have no menu items.</h4>
+                <a href="{{url_for('newCatalogItem', category_id = category.id )}}">
+                        <h3> Create New Item </h3>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class='login_pane' id='login_pane'>
+            <script>
+                $(function () {
+                    $("#login_pane").load("{{ url_for('showLogin') }}");
+                });
+            </script>
+        </div>
+    </body>
 
 </html>

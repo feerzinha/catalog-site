@@ -21,12 +21,12 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # Users
-user1 = User(id="feerzinha@gmail.com", name="Fernanda")
+user1 = User(id="feerzinh@gmail.com", name="FernandaMoya")
 
 session.add(user1)
 session.commit()
 
-user2 = User(id="fernanda.moya@udacity.com", name="Fernanda")
+user2 = User(id="fernanda.moyaa@udacity.com", name="FernandaUda")
 
 session.add(user2)
 session.commit()

@@ -1,6 +1,38 @@
+# Server setup
+
+### Public IP Address: 52.70.226.141
+
+### Configurations:
+
+- SSH Port to 2200 
+
+- HTTP Port to 80
+
+- Check `requirements.txt` to install essential packages 
+
+### Access
+
+Public IP Address: 52.70.226.141
+Grader: grader
+Password: grader
+Passphrase: udacity
+
+To login, use: ssh grader@52.70.226.141 -p 2200 -i linuxCourse
+
+
+### Server Components
+
+- Apache2
+- Database SQLite
+- wsgi
+- Flask
+
+
+# Project Documentation
+
 This is a project from Udacity - Full Stack Developer Nanodegree. It is a sports catalog website, that shows categories and items from each categories.
 
-The site administrators (at this momento, just need to be logged with a google account) can add, edit and delete categories and items.
+The site administrators (at this moment, just need to be logged with a google account) can add, edit and delete categories and items.
 
 To run this project
 

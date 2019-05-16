@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 CLIENT_ID = json.loads(
-    open('client_secret.json', 'r').read())['web']['client_id']
+    open('/home/grader/nd_project/catalog-site/client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog Application"
 
 engine = create_engine('sqlite:///catalog.db', connect_args={'check_same_thread': False}, echo=True)
@@ -59,7 +59,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secret.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/home/grader/nd_project/catalog-site/client_secret.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:

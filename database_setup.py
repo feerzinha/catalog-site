@@ -8,6 +8,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
 Base = declarative_base()
+#BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+#DATABASE_PATH = os.path.join(BASE_DIR, 'catalog.db')
 
 class User(Base):
     """This class is used for store users informations and will be used to record creations and deletions on the future."""
@@ -67,6 +69,6 @@ class CatalogItem(Base):
         }
 
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///'+ '/home/grader/nd_project/catalog-site/catalog.db')
 
 Base.metadata.create_all(engine)

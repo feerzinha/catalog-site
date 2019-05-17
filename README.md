@@ -1,6 +1,6 @@
 # Server setup
 
-### Public IP Address: 52.70.226.141
+### URL: http://52.70.226.141.xip.io/
 
 ### Configurations:
 
@@ -43,3 +43,10 @@ To run this project
 3. run `python database_items.py` to populate the database
 
 4. run `python catalog_project.py` and navigate to localhost:5000 in your browser
+
+
+# Third party resources
+
+- Udacity Full Stack Nanodegree
+- [Flask Hello World App with Apache WSGI](https://www.bogotobogo.com/python/Flask/Python_Flask_HelloWorld_App_with_Apache_WSGI_Ubuntu14.php)
+- [Python Flask Deploy](http://www.devfuria.com.br/python/flask-apache/)

@@ -1,12 +1,12 @@
-"""This file manages all the website endpoints, render the templates and take care of the authentication."""
 
+"""This file manages all the website endpoints, render the templates and take care of the authentication."""
 from flask import Flask, render_template, request, redirect, jsonify, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, joinedload
 from database_setup import Base, User, CatalogItem, Category
+from flask import session as login_session
 
 # For Auth
-from flask import session as login_session
 import random, string
 
 from oauth2client.client import flow_from_clientsecrets
@@ -21,10 +21,10 @@ app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 CLIENT_ID = json.loads(
-    open('client_secret.json', 'r').read())['web']['client_id']
+    open('/home/grader/nd_project/catalog-site/client_secret.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog Application"
 
-engine = create_engine('sqlite:///catalog.db', connect_args={'check_same_thread': False}, echo=True)
+engine = create_engine('sqlite:////home/grader/nd_project/catalog-site/catalog.db', connect_args={'check_same_thread': False}, echo=True)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 session = Session()
@@ -59,7 +59,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secret.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/home/grader/nd_project/catalog-site/client_secret.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -73,7 +73,7 @@ def gconnect():
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
     h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    result = json.loads(h.request(url, 'GET')[1].decode())
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)

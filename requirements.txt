@@ -11,5 +11,5 @@ rsa==4.0
 six==1.12.0
 SQLAlchemy==1.3.3
 uritemplate==0.6
-urllib3==1.13.1
+urllib3==1.26.5
 Werkzeug==0.15.4
